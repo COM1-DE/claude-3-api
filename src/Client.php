@@ -18,11 +18,11 @@ class Client
     public function __construct(private Config $config)
     {
         $this->httpClient = new HttpClient([
-            'headers' => [
+            'headers' => array_merge([
                 'Content-Type' => 'application/json',
                 'x-api-key' => $this->config->getApiKey(),
                 'anthropic-version' => $this->config->getApiVersion(),
-            ],
+            ], $config->getAdditionalHeaders())
         ]);
     }
 
@@ -53,6 +53,7 @@ class Client
             $messageRequest->addMessage(new Message($request['role'], [new TextContent($request['content'])]));
         } else {
             foreach ($request as $message) {
+
                 $messageRequest->addMessage(new Message($message['role'], [new TextContent($message['content'])]));
             }
         }

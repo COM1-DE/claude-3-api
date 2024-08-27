@@ -6,16 +6,26 @@ class TextContent implements ContentInterface
 {
     private string $text;
 
-    public function __construct(string $text)
+    private ?string $cacheControl;
+
+
+    public function __construct(string $text, ?string $cacheControl = null)
     {
         $this->text = $text;
+        $this->cacheControl = $cacheControl;
     }
 
     public function toArray(): array
     {
-        return [
+        $data = [
             'type' => 'text',
             'text' => $this->text,
         ];
+
+        if($this->cacheControl !== null) {
+            $data['cache_control'] = ['type' => $this->cacheControl];
+        }
+
+        return $data;
     }
 }

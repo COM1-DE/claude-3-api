@@ -2,6 +2,7 @@
 
 namespace Claude\Claude3Api\Requests;
 
+use Claude\Claude3Api\Models\Content\TextContent;
 use Claude\Claude3Api\Models\Message;
 use Claude\Claude3Api\Models\Tool;
 use Claude\Claude3Api\Exceptions\InvalidArgumentException;
@@ -13,7 +14,7 @@ class MessageRequest
     private array $messages = [];
     private array $tools = [];
     private ?array $toolChoice = null;
-    private ?string $system = null;
+    private string|array|null $system = null;
     private ?float $temperature = null;
     private ?array $stopSequences = null;
     private ?bool $stream = null;
@@ -51,7 +52,7 @@ class MessageRequest
         return $this;
     }
 
-    public function setSystem(?string $system): self
+    public function setSystem(string|array $system): self
     {
         $this->system = $system;
         return $this;
@@ -114,7 +115,17 @@ class MessageRequest
         }
 
         if ($this->system !== null) {
-            $data['system'] = $this->system;
+            if(is_string($this->system)) {
+                $data['system'] = $this->system;
+            }
+            elseif(is_array($this->system)) {
+                $data['system'] = array_map(function (TextContent $systemPrompt) {
+                    return $systemPrompt->toArray();
+                }, $this->system);
+            }
+            else {
+                throw new InvalidArgumentException('system must be a string or an array');
+            }
         }
 
         if ($this->temperature !== null) {

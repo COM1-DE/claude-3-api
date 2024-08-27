@@ -7,7 +7,8 @@ class Config
     public function __construct(
         private string $apiKey,
         private string $apiVersion = '2023-06-01',
-        private string $baseUrl = 'https://api.anthropic.com/v1'
+        private string $baseUrl = 'https://api.anthropic.com/v1',
+        private array $additionalHeaders = []
     ) {
     }
 
@@ -24,5 +25,10 @@ class Config
     public function getBaseUrl(): string
     {
         return $this->baseUrl;
+    }
+
+    public function getAdditionalHeaders(): array
+    {
+        return $this->additionalHeaders;
     }
 }
